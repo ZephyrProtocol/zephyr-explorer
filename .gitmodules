@@ -1,3 +1,3 @@
-[submodule "src/haven-main"]
-	path = src/haven-main
-	url = https://github.com/haven-protocol-org/haven-main.git
+[submodule "src/zephyr"]
+	path = src/zephyr
+	url = ssh://git@github.com-zephyr:ZephyrProtocol/zephyr

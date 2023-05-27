@@ -18,7 +18,7 @@ namespace xmreg
         p.add("txhash", -1);
 
         options_description desc(
-                "xmrblocks, Haven Blockchain Explorer");
+                "xmrblocks, Zephyr Blockchain Explorer");
 
         desc.add_options()
                 ("help,h", value<bool>()->default_value(false)->implicit_value(true),
@@ -44,7 +44,7 @@ namespace xmreg
                 ("enable-autorefresh-option", value<bool>()->default_value(false)->implicit_value(true),
                  "enable users to have the index page on autorefresh")
                 ("enable-emission-monitor", value<bool>()->default_value(false)->implicit_value(true),
-                 "enable Haven total emission monitoring thread")
+                 "enable Zephyr total emission monitoring thread")
                 ("port,p", value<string>()->default_value("8081"),
                  "default explorer port")
                 ("bindaddr,x", value<string>()->default_value("0.0.0.0"),
@@ -64,7 +64,7 @@ namespace xmreg
                 ("concurrency,c", value<size_t>()->default_value(0),
                  "number of threads handling http queries. Default is 0 which means it is based you on the cpu")
                 ("bc-path,b", value<string>(),
-                 "path to lmdb folder of the blockchain, e.g., ~/.haven/lmdb")
+                 "path to lmdb folder of the blockchain, e.g., ~/.zephyr/lmdb")
                 ("ssl-crt-file", value<string>(),
                  "path to crt file for ssl (https) functionality")
                 ("ssl-key-file", value<string>(),
@@ -72,7 +72,7 @@ namespace xmreg
                 ("daemon-login", value<string>(),
                  "Specify username[:password] for daemon RPC client")
                 ("daemon-url,d", value<string>()->default_value("http:://127.0.0.1:17750"),
-                 "Haven daemon url");
+                 "Zephyr daemon url");
 
 
         store(command_line_parser(acc, avv)

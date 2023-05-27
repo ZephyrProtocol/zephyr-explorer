@@ -25,7 +25,7 @@ WORKDIR /explorer
 COPY . .
 RUN git submodule update --init --recursive
 
-# Building Haven
+# Building Zephyr
 WORKDIR src/haven-main/build/Linux/master/release/
 RUN cmake -D CMAKE_BUILD_TYPE=Release -D STACK_TRACE:BOOL=OFF ../../../..
 RUN cmake --build . --target wallet --

@@ -1,77 +1,72 @@
-# Onion Haven Blockchain Explorer
+# Onion Zephyr Blockchain Explorer
 
-Currently available Haven blockchain explorers have several limitations which are of
+Currently available Zephyr blockchain explorers have several limitations which are of
 special importance to privacy-oriented users:
 
- - they use JavaScript,
- - have images which might be used for [cookieless tracking](http://lucb1e.com/rp/cookielesscookies/),
- - track users activates through google analytics,
- - are closed sourced,
- - are not available as hidden services,
- - have limited JSON API.
-
+- they use JavaScript,
+- have images which might be used for [cookieless tracking](http://lucb1e.com/rp/cookielesscookies/),
+- track users activates through google analytics,
+- are closed sourced,
+- are not available as hidden services,
+- have limited JSON API.
 
 In this example, these limitations are addressed by development of
-an Onion Haven Blockchain Explorer. The example not only shows how to use
-Haven C++ libraries, but also demonstrates how to use:
+an Onion Zephyr Blockchain Explorer. The example not only shows how to use
+Zephyr C++ libraries, but also demonstrates how to use:
 
- - [crow](https://github.com/ipkn/crow) - C++ micro web framework
- - [mstch](https://github.com/no1msd/mstch) - C++ {{mustache}} templates
- - [json](https://github.com/nlohmann/json) - JSON for Modern C++
- - [fmt](https://github.com/fmtlib/fmt) - Small, safe and fast string formatting library
+- [crow](https://github.com/ipkn/crow) - C++ micro web framework
+- [mstch](https://github.com/no1msd/mstch) - C++ {{mustache}} templates
+- [json](https://github.com/nlohmann/json) - JSON for Modern C++
+- [fmt](https://github.com/fmtlib/fmt) - Small, safe and fast string formatting library
 
 ## Explorer hosts
 
 Mainnet versions:
- - [https://explorer.havenprotocol.org/](https://explorer.havenprotocol.org/) - https enabled, most popular and very stable.
+
+- [https://explorer.havenprotocol.org/](https://explorer.havenprotocol.org/) - https enabled, most popular and very stable.
 
 Testnet version:
 
- - [https://explorer-testnet.havenprotocol.org/](https://explorer-testnet.havenprotocol.org/) - https enabled.
+- [https://explorer-testnet.havenprotocol.org/](https://explorer-testnet.havenprotocol.org/) - https enabled.
 
 Stagenet version:
- 
- - [https://explorer-stagenet.havenprotocol.org/](https://explorer-stagenet.havenprotocol.org/) - https enabled.
 
+- [https://explorer-stagenet.havenprotocol.org/](https://explorer-stagenet.havenprotocol.org/) - https enabled.
 
+## Zephyr Blockchain Explorer features
 
+The key features of the Zephyr Blockchain Explorer are:
 
-## Haven Blockchain Explorer features
-
-The key features of the Haven Blockchain Explorer are:
-
- - no cookies, no web analytics trackers, no images,
- - open sourced,
- - made fully in C++,
- - showing encrypted payments ID,
- - showing ring signatures,
- - showing transaction extra field,
- - showing public components of Haven addresses,
- - decoding which outputs and mixins belong to the given Haven address and viewkey,
- - can prove that you send Haven to someone,
- - detailed information about ring members, such as, their age, timescale and their ring sizes,
- - showing number of amount output indices,
- - support Haven testnet and stagnet networks,
- - tx checker and pusher for online pushing of transactions,
- - estimate possible spendings based on address and viewkey,
- - can provide total amount of all miner fees,
- - decoding encrypted payment id,
- - decoding outputs and proving txs sent to sub-address.
- - listing RandomX code for each block
-
+- no cookies, no web analytics trackers, no images,
+- open sourced,
+- made fully in C++,
+- showing encrypted payments ID,
+- showing ring signatures,
+- showing transaction extra field,
+- showing public components of Zephyr addresses,
+- decoding which outputs and mixins belong to the given Zephyr address and viewkey,
+- can prove that you send Zephyr to someone,
+- detailed information about ring members, such as, their age, timescale and their ring sizes,
+- showing number of amount output indices,
+- support Zephyr testnet and stagnet networks,
+- tx checker and pusher for online pushing of transactions,
+- estimate possible spendings based on address and viewkey,
+- can provide total amount of all miner fees,
+- decoding encrypted payment id,
+- decoding outputs and proving txs sent to sub-address.
+- listing RandomX code for each block
 
 ## Development branch
 
 Current development branch:
 
- - https://github.com/moneroexamples/onion-monero-blockchain-explorer/tree/devel
+- https://github.com/moneroexamples/onion-monero-blockchain-explorer/tree/devel
 
-Note: `devel` branch of the explorer follows `master` branch of the Haven!
+Note: `devel` branch of the explorer follows `master` branch of the Zephyr!
 
 ## Compilation on Ubuntu 18.04/20.04
 
-
-#### Haven download and compilation
+#### Zephyr download and compilation
 
 To download and compile recent Monero follow instructions
 in the following link:
@@ -87,7 +82,7 @@ as follows:
 # go to home folder if still in ~/monero
 cd ~
 
-# download the source code 
+# download the source code
 git clone --recursive https://github.com/haven-protocol-org/haven-explorer.git
 
 # enter the downloaded sourced code folder
@@ -111,8 +106,8 @@ cmake -DMONERO_DIR=$PWD/../src/haven-main ..
 make
 ```
 
-
 To run it:
+
 ```
 ./xmrblocks
 ```
@@ -189,8 +184,8 @@ xmrblocks, Onion Monero Blockchain Explorer:
   --ssl-key-file arg                    path to key file for ssl (https)
                                         functionality
   -d [ --daemon-url ] arg (=http:://127.0.0.1:17750)
-                                        Haven daemon url
-  --daemon-login arg                    Specify username[:password] for daemon 
+                                        Zephyr daemon url
+  --daemon-login arg                    Specify username[:password] for daemon
                                         RPC client
 ```
 
@@ -209,36 +204,35 @@ alias xmrblockstestnet='~/onion-monero-blockchain-explorer/build/xmrblocks -t --
 Obtaining current Monero emission amount is not straight forward. Thus, by default it is
 disabled. To enable it use `--enable-emission-monitor` flag, e.g.,
 
-
 ```bash
 xmrblocks --enable-emission-monitor
 ```
 
 This flag will enable emission monitoring thread. When started, the thread
- will initially scan the entire blockchain, and calculate the cumulative emission based on each block.
+will initially scan the entire blockchain, and calculate the cumulative emission based on each block.
 Since it is a separate thread, the explorer will work as usual during this time.
 Every 10000 blocks, the thread will save current emission in a file, by default,
- in `~/.bitmonero/lmdb/emission_amount.txt`. For testnet or stagenet networks,
- it is `~/.bitmonero/testnet/lmdb/emission_amount.txt` or `~/.bitmonero/stagenet/lmdb/emission_amount.txt`. This file is used so that we don't
- need to rescan entire blockchain whenever the explorer is restarted. When the
- explorer restarts, the thread will first check if `~/.bitmonero/lmdb/emission_amount.txt`
- is present, read its values, and continue from there if possible. Subsequently, only the initial
- use of the tread is time consuming. Once the thread scans the entire blockchain, it updates
- the emission amount using new blocks as they come. Since the explorer writes this file, there can
- be only one instance of it running for mainnet, testnet and stagenet. Thus, for example, you cant have
- two explorers for mainnet
- running at the same time, as they will be trying to write and read the same file at the same time,
- leading to unexpected results. Off course having one instance for mainnet and one instance for testnet
- is fine, as they write to different files.
+in `~/.bitmonero/lmdb/emission_amount.txt`. For testnet or stagenet networks,
+it is `~/.bitmonero/testnet/lmdb/emission_amount.txt` or `~/.bitmonero/stagenet/lmdb/emission_amount.txt`. This file is used so that we don't
+need to rescan entire blockchain whenever the explorer is restarted. When the
+explorer restarts, the thread will first check if `~/.bitmonero/lmdb/emission_amount.txt`
+is present, read its values, and continue from there if possible. Subsequently, only the initial
+use of the tread is time consuming. Once the thread scans the entire blockchain, it updates
+the emission amount using new blocks as they come. Since the explorer writes this file, there can
+be only one instance of it running for mainnet, testnet and stagenet. Thus, for example, you cant have
+two explorers for mainnet
+running at the same time, as they will be trying to write and read the same file at the same time,
+leading to unexpected results. Off course having one instance for mainnet and one instance for testnet
+is fine, as they write to different files.
 
- When the emission monitor is enabled, information about current emission of coinbase and fees is
- displayed on the front page, e.g., :
+When the emission monitor is enabled, information about current emission of coinbase and fees is
+displayed on the front page, e.g., :
 
 ```
 Monero emission (fees) is 14485540.430 (52545.373) as of 1313448 block
 ```
 
-The values given, can be checked using Monero daemon's  `print_coinbase_tx_sum` command.
+The values given, can be checked using Monero daemon's `print_coinbase_tx_sum` command.
 For example, for the above example: `print_coinbase_tx_sum 0 1313449`.
 
 To disable the monitor, simply restart the explorer without `--enable-emission-monitor` flag.
@@ -338,7 +332,6 @@ Partial results shown:
 
 Transactions in last 25 blocks
 
-
 ```bash
 curl  -w "\n" -X GET "http://127.0.0.1:8081/api/transactions"
 ```
@@ -388,7 +381,6 @@ Partial results shown:
 
 #### api/transactions?page=<page_no>&limit=<tx_per_page>
 
-
 ```bash
 curl  -w "\n" -X GET "http://127.0.0.1:8081/api/transactions?page=2&limit=10"
 ```
@@ -396,7 +388,6 @@ curl  -w "\n" -X GET "http://127.0.0.1:8081/api/transactions?page=2&limit=10"
 Result analogical to the one above.
 
 #### api/block/<block_number|block_hash>
-
 
 ```bash
 curl  -w "\n" -X GET "http://139.162.32.245:8081/api/block/1293257"
@@ -527,13 +518,12 @@ Partial results shown:
 }
 ```
 
-
 #### api/outputs?txhash=<tx_hash>&address=<address>&viewkey=<viewkey>&txprove=<0|1>
 
 For `txprove=0` we check which outputs belong to given address and corresponding viewkey.
 For `txprove=1` we use to prove to the recipient that we sent them founds.
 For this, we use recipient's address and our tx private key as a viewkey value,
- i.e., `viewkey=<tx_private_key>`
+i.e., `viewkey=<tx_private_key>`
 
 Checking outputs:
 
@@ -604,7 +594,6 @@ curl  -w "\n" -X GET "http://127.0.0.1:8082/api/outputs?txhash=94782a8c0aa8d8768
 }
 ```
 
-
 Result analogical to the one above.
 
 #### api/networkinfo
@@ -643,7 +632,6 @@ curl  -w "\n" -X GET "http://127.0.0.1:8081/api/networkinfo"
 #### api/outputsblocks
 
 Search for our outputs in last few blocks (up to 5 blocks), using provided address and viewkey.
-
 
 ```bash
 # testnet address
@@ -764,7 +752,7 @@ Example result not shown.
 
 ## Other monero examples
 
-Other examples can be found on  [github](https://github.com/moneroexamples?tab=repositories).
+Other examples can be found on [github](https://github.com/moneroexamples?tab=repositories).
 Please know that some of the examples/repositories are not
 finished and may not work as intended.
 

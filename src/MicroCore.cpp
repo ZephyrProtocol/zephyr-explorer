@@ -211,8 +211,8 @@ MicroCore::find_output_in_tx(const transaction& tx,
     auto it = std::find_if(tx.vout.begin(), tx.vout.end(),
                            [&](const tx_out& o)
                            {
-                               const txout_to_key& tx_in_to_key
-                                       = boost::get<txout_to_key>(o.target);
+                               const txout_zephyr_tagged_key& tx_in_to_key
+                                       = boost::get<txout_zephyr_tagged_key>(o.target);
 
                                ++idx;
 

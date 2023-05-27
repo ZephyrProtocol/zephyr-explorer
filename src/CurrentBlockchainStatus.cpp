@@ -135,7 +135,7 @@ CurrentBlockchainStatus::calculate_emission_in_blocks(
 
         mcore->get_block_by_height(start_blk, blk);
 
-        uint64_t coinbase_amount = get_outs_money_amount(blk.miner_tx)["XHV"];
+        uint64_t coinbase_amount = get_outs_money_amount(blk.miner_tx)["ZEPH"];
 
         vector<transaction> txs;
         vector<crypto::hash> missed_txs;
@@ -303,7 +303,7 @@ CurrentBlockchainStatus::get_circulating_supply()
   return core_storage->get_db().get_circulating_supply();
 }
 
-bf::path CurrentBlockchainStatus::blockchain_path {"~/.haven/lmdb"};
+bf::path CurrentBlockchainStatus::blockchain_path {"~/.zephyr/lmdb"};
 
 cryptonote::network_type CurrentBlockchainStatus::nettype {cryptonote::network_type::MAINNET};
 

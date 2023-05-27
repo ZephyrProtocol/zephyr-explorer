@@ -71,9 +71,9 @@ find_package(Boost COMPONENTS
 find_package(Sanitizers)
 
 if(APPLE)
-    include_directories(/usr/local/opt/openssl@1.1/include)
-    link_directories(/usr/local/opt/openssl@1.1/lib)
-    link_directories(/usr/local/lib)
+    include_directories(/opt/homebrew/opt/openssl@3/include)
+    link_directories(/opt/homebrew/opt/openssl@3/lib)
+    link_directories(/opt/homebrew/lib/)
 endif()
 
 MESSAGE(STATUS "Looking for libunbound") # FindUnbound.cmake from monero repo
@@ -147,7 +147,7 @@ set(LIBRARIES
         cryptonote_basic
         multisig
         daemonizer
-        offshore
+        oracle
         lmdb
         ringct
         ringct_basic

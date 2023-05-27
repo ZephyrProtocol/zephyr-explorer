@@ -161,14 +161,14 @@ public:
 
             if (!err.empty())
             {
-                cerr << "Error connecting to Haven daemon due to "
+                cerr << "Error connecting to Zephyr daemon due to "
                      << err << endl;
                 return false;
             }
         }
         else
         {
-            cerr << "Error connecting to Haven daemon at "
+            cerr << "Error connecting to Zephyr daemon at "
                  << daemon_url << endl;
             return false;
         }

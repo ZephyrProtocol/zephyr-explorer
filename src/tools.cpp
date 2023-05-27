@@ -239,8 +239,8 @@ generate_key_image(const crypto::key_derivation& derivation,
 string
 get_default_lmdb_folder(cryptonote::network_type nettype)
 {
-    // default path to haven folder
-    // on linux this is /home/<username>/.haven
+    // default path to zephyr folder
+    // on linux this is /home/<username>/.zephyr
     string default_monero_dir = tools::get_default_data_dir();
 
     if (nettype == cryptonote::network_type::TESTNET)
@@ -356,18 +356,12 @@ summary_of_in_out_rct(
 
     for (const tx_out& txout: tx.vout)
     {
-      if (txout.target.type() == typeid(txout_to_key)) {
-        const txout_to_key& txout_key = boost::get<cryptonote::txout_to_key>(txout.target);
-        output_pub_keys.push_back(make_pair(txout_key, txout.amount));
-      } else if (txout.target.type() == typeid(txout_offshore)) {
-        const txout_offshore& txout_key = (txout_offshore&) boost::get<cryptonote::txout_offshore>(txout.target);
-        output_pub_keys.push_back(make_pair(txout_key, txout.amount));
-      } else if (txout.target.type() == typeid(txout_xasset)) {
-        const txout_xasset& txout_key = (txout_xasset&) boost::get<cryptonote::txout_xasset>(txout.target);
+      if (txout.target.type() == typeid(txout_zephyr_tagged_key)) {
+        const txout_zephyr_tagged_key& txout_key = boost::get<cryptonote::txout_zephyr_tagged_key>(txout.target);
         output_pub_keys.push_back(make_pair(txout_key, txout.amount));
       } else {
         // push empty pair.
-        output_pub_keys.push_back(pair<txout_to_key, uint64_t>{});
+        output_pub_keys.push_back(pair<txout_zephyr_tagged_key, uint64_t>{});
         continue;
       }
 
@@ -379,11 +373,7 @@ summary_of_in_out_rct(
         // get tx input key
         const cryptonote::txin_v& tx_in = tx.vin[i];
 
-        if (tx_in.type() != typeid(cryptonote::txin_to_key) && 
-            tx_in.type() != typeid(cryptonote::txin_offshore) &&
-            tx_in.type() != typeid(cryptonote::txin_onshore) &&
-            tx_in.type() != typeid(cryptonote::txin_xasset)
-        )
+        if (tx_in.type() != typeid(cryptonote::txin_zephyr_key))
         {
             continue;
         }
@@ -392,19 +382,8 @@ summary_of_in_out_rct(
         // get the input amount and key offsets
         uint64_t amount = 0;
         std::vector<uint64_t> key_offsets;
-        if (tx_in.type() == typeid(cryptonote::txin_to_key)) {
-            amount = boost::get<cryptonote::txin_to_key>(tx_in).amount;
-            key_offsets = boost::get<cryptonote::txin_to_key>(tx_in).key_offsets;
-        } else if (tx_in.type() == typeid(cryptonote::txin_offshore)) {
-            amount = boost::get<cryptonote::txin_offshore>(tx_in).amount;
-            key_offsets = boost::get<cryptonote::txin_offshore>(tx_in).key_offsets;
-        } else if (tx_in.type() == typeid(cryptonote::txin_onshore)) {
-            amount = boost::get<cryptonote::txin_onshore>(tx_in).amount;
-            key_offsets = boost::get<cryptonote::txin_onshore>(tx_in).key_offsets;
-        } else {
-            amount = boost::get<cryptonote::txin_xasset>(tx_in).amount;
-            key_offsets = boost::get<cryptonote::txin_xasset>(tx_in).key_offsets;
-        }
+        amount = boost::get<cryptonote::txin_zephyr_key>(tx_in).amount;
+        key_offsets = boost::get<cryptonote::txin_zephyr_key>(tx_in).key_offsets;
 
         // increase xmr_inputs
         xmr_inputs += amount;
@@ -473,14 +452,14 @@ sum_money_in_inputs(const transaction& tx)
     for (size_t i = 0; i < input_no; ++i)
     {
 
-        if(tx.vin[i].type() != typeid(cryptonote::txin_to_key))
+        if(tx.vin[i].type() != typeid(cryptonote::txin_zephyr_key))
         {
             continue;
         }
 
         // get tx input key
-        const cryptonote::txin_to_key& tx_in_to_key
-                = boost::get<cryptonote::txin_to_key>(tx.vin[i]);
+        const cryptonote::txin_zephyr_key& tx_in_to_key
+                = boost::get<cryptonote::txin_zephyr_key>(tx.vin[i]);
 
         sum_xmr += tx_in_to_key.amount;
     }
@@ -538,14 +517,14 @@ count_nonrct_inputs(const transaction& tx)
     for (size_t i = 0; i < input_no; ++i)
     {
 
-        if(tx.vin[i].type() != typeid(cryptonote::txin_to_key))
+        if(tx.vin[i].type() != typeid(cryptonote::txin_zephyr_key))
         {
             continue;
         }
 
         // get tx input key
-        const cryptonote::txin_to_key& tx_in_to_key
-                = boost::get<cryptonote::txin_to_key>(tx.vin[i]);
+        const cryptonote::txin_zephyr_key& tx_in_to_key
+                = boost::get<cryptonote::txin_zephyr_key>(tx.vin[i]);
 
         if (tx_in_to_key.amount != 0)
             ++num;
@@ -638,23 +617,23 @@ sum_fees_in_txs(const vector<transaction>& txs)
 
 
 
-vector<pair<txout_to_key, uint64_t>>
+vector<pair<txout_zephyr_tagged_key, uint64_t>>
 get_ouputs(const transaction& tx)
 {
-    vector<pair<txout_to_key, uint64_t>> outputs;
+    vector<pair<txout_zephyr_tagged_key, uint64_t>> outputs;
 
     for (const tx_out& txout: tx.vout)
     {
-        if (txout.target.type() != typeid(txout_to_key))
+        if (txout.target.type() != typeid(txout_zephyr_tagged_key))
         {
             // push empty pair.
-            outputs.push_back(pair<txout_to_key, uint64_t>{});
+            outputs.push_back(pair<txout_zephyr_tagged_key, uint64_t>{});
             continue;
         }
 
         // get tx input key
-        const txout_to_key& txout_key
-                = boost::get<cryptonote::txout_to_key>(txout.target);
+        const txout_zephyr_tagged_key& txout_key
+                = boost::get<cryptonote::txout_zephyr_tagged_key>(txout.target);
 
         outputs.push_back(make_pair(txout_key, txout.amount));
     }
@@ -663,22 +642,22 @@ get_ouputs(const transaction& tx)
 
 };
 
-vector<tuple<txout_to_key, uint64_t, uint64_t>>
+vector<tuple<txout_zephyr_tagged_key, uint64_t, uint64_t>>
 get_ouputs_tuple(const transaction& tx)
 {
-    vector<tuple<txout_to_key, uint64_t, uint64_t>> outputs;
+    vector<tuple<txout_zephyr_tagged_key, uint64_t, uint64_t>> outputs;
 
     for (uint64_t n = 0; n < tx.vout.size(); ++n)
     {
 
-        if (tx.vout[n].target.type() != typeid(txout_to_key))
+        if (tx.vout[n].target.type() != typeid(txout_zephyr_tagged_key))
         {
             continue;
         }
 
         // get tx input key
-        const txout_to_key& txout_key
-                = boost::get<cryptonote::txout_to_key>(tx.vout[n].target);
+        const txout_zephyr_tagged_key& txout_key
+                = boost::get<cryptonote::txout_zephyr_tagged_key>(tx.vout[n].target);
 
         outputs.push_back(make_tuple(txout_key, tx.vout[n].amount, n));
     }
@@ -696,14 +675,14 @@ get_mixin_no(const transaction& tx)
     for (size_t i = 0; i < input_no; ++i)
     {
 
-        if(tx.vin[i].type() != typeid(cryptonote::txin_to_key))
+        if(tx.vin[i].type() != typeid(cryptonote::txin_zephyr_key))
         {
             continue;
         }
 
         // get tx input key
-        const txin_to_key& tx_in_to_key
-                = boost::get<cryptonote::txin_to_key>(tx.vin[i]);
+        const txin_zephyr_key& tx_in_to_key
+                = boost::get<cryptonote::txin_zephyr_key>(tx.vin[i]);
 
         mixin_no = tx_in_to_key.key_offsets.size();
 
@@ -777,11 +756,8 @@ get_key_images(const transaction& tx)
         // get tx input key
         const cryptonote::txin_v& tx_in = tx.vin[i];
 
-        if (tx_in.type() != typeid(cryptonote::txin_to_key) && 
-            tx_in.type() != typeid(cryptonote::txin_offshore) &&
-            tx_in.type() != typeid(cryptonote::txin_onshore) &&
-            tx_in.type() != typeid(cryptonote::txin_xasset)
-        ){
+        if (tx_in.type() != typeid(cryptonote::txin_zephyr_key))
+        {
             continue;
         }
 
@@ -957,9 +933,7 @@ decode_ringct(rct::rctSig const& rv,
             case rct::RCTTypeSimple:
             case rct::RCTTypeBulletproof:
             case rct::RCTTypeBulletproof2:
-            case rct::RCTTypeCLSAG:
-            case rct::RCTTypeCLSAGN:
-            case rct::RCTTypeHaven2:
+            case rct::RCTTypeBulletproofPlus:
                 amount = rct::decodeRctSimple(rv,
                                               rct::sk2rct(scalar1),
                                               i,
@@ -1188,8 +1162,8 @@ is_output_ours(const size_t& output_index,
     //cout << "\n" << tx.vout.size() << " " << output_index << endl;
 
     // get tx output public key
-    const txout_to_key tx_out_to_key
-            = boost::get<txout_to_key>(tx.vout[output_index].target);
+    const txout_zephyr_tagged_key tx_out_to_key
+            = boost::get<txout_zephyr_tagged_key>(tx.vout[output_index].target);
 
 
     if (tx_out_to_key.key == pubkey)

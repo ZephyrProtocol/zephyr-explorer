@@ -344,10 +344,10 @@ main(int ac, const char* av[])
         return myxmr::htmlresponse(xmrblocks.show_block(block_height));
     });
     
-    CROW_ROUTE(app, "/randomx/<uint>")
-    ([&](size_t block_height) {
-        return myxmr::htmlresponse(xmrblocks.show_randomx(block_height));
-    });
+    // CROW_ROUTE(app, "/randomx/<uint>")
+    // ([&](size_t block_height) {
+    //     return myxmr::htmlresponse(xmrblocks.show_randomx(block_height));
+    // });
 
     CROW_ROUTE(app, "/block/<string>")
     ([&](string block_hash) {
@@ -379,23 +379,23 @@ main(int ac, const char* av[])
                     xmrblocks.show_tx_hex(remove_bad_chars(tx_hash)));
         });
 
-        CROW_ROUTE(app, "/ringmembershex/<string>")
-        ([&](string tx_hash) {
-            return crow::response(
-                    xmrblocks.show_ringmembers_hex(remove_bad_chars(tx_hash)));
-        });
+        // CROW_ROUTE(app, "/ringmembershex/<string>")
+        // ([&](string tx_hash) {
+        //     return crow::response(
+        //             xmrblocks.show_ringmembers_hex(remove_bad_chars(tx_hash)));
+        // });
 
-        CROW_ROUTE(app, "/blockhex/<uint>")
-        ([&](size_t block_height) {
-            return crow::response(
-                    xmrblocks.show_block_hex(block_height, false));
-        });
+        // CROW_ROUTE(app, "/blockhex/<uint>")
+        // ([&](size_t block_height) {
+        //     return crow::response(
+        //             xmrblocks.show_block_hex(block_height, false));
+        // });
 
-        CROW_ROUTE(app, "/blockhexcomplete/<uint>")
-        ([&](size_t block_height) {
-            return crow::response(
-                    xmrblocks.show_block_hex(block_height, true));
-        });
+        // CROW_ROUTE(app, "/blockhexcomplete/<uint>")
+        // ([&](size_t block_height) {
+        //     return crow::response(
+        //             xmrblocks.show_block_hex(block_height, true));
+        // });
 
 //        CROW_ROUTE(app, "/ringmemberstxhex/<string>")
 //        ([&](string tx_hash) {
@@ -403,12 +403,12 @@ main(int ac, const char* av[])
 //              xmrblocks.show_ringmemberstx_hex(remove_bad_chars(tx_hash)));
 //        });
 
-        CROW_ROUTE(app, "/ringmemberstxhex/<string>")
-        ([&](string tx_hash) {
-            return myxmr::jsonresponse {
-                xmrblocks.show_ringmemberstx_jsonhex(
-                        remove_bad_chars(tx_hash))};
-        });
+        // CROW_ROUTE(app, "/ringmemberstxhex/<string>")
+        // ([&](string tx_hash) {
+        //     return myxmr::jsonresponse {
+        //         xmrblocks.show_ringmemberstx_jsonhex(
+        //                 remove_bad_chars(tx_hash))};
+        // });
 
     }
 
@@ -759,22 +759,22 @@ main(int ac, const char* av[])
         });
         
         // only for xhv for coinmarketcap
-        CROW_ROUTE(app, "/api/circulating")
-        ([&]() {
+        // CROW_ROUTE(app, "/api/circulating")
+        // ([&]() {
 
-            myxmr::jsonresponse r{xmrblocks.json_circulating_xhv()};
+        //     myxmr::jsonresponse r{xmrblocks.json_circulating_xhv()};
 
-            return r;
-        });
+        //     return r;
+        // });
         
-        // supply for all assets
-        CROW_ROUTE(app, "/api/supply")
-        ([&]() {
+        // // supply for all assets
+        // CROW_ROUTE(app, "/api/supply")
+        // ([&]() {
 
-            myxmr::jsonresponse r{xmrblocks.json_circulating()};
+        //     myxmr::jsonresponse r{xmrblocks.json_circulating()};
 
-            return r;
-        });
+        //     return r;
+        // });
 
         CROW_ROUTE(app, "/api/outputs").methods("GET"_method)
         ([&](const crow::request &req) {
