@@ -5813,6 +5813,18 @@ json_emission()
 }
 
 /*
+* Lets use this json api convention for success and error
+* https://labs.omniti.com/labs/jsend
+*/
+double
+plain_emission()
+{
+    CurrentBlockchainStatus::Emission current_values
+            = CurrentBlockchainStatus::get_emission();
+    return XMR_AMOUNT(current_values.coinbase);
+}
+
+/*
  * Lets use this json api convention for success and error
  * https://labs.omniti.com/labs/jsend
  */

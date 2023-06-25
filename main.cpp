@@ -757,6 +757,12 @@ main(int ac, const char* av[])
 
             return r;
         });
+
+        CROW_ROUTE(app, "/api/circulating")
+        ([&]() {
+            myxmr::jsonresponse r{xmrblocks.plain_emission()};
+            return r;
+        });
         
         // only for xhv for coinmarketcap
         // CROW_ROUTE(app, "/api/circulating")
