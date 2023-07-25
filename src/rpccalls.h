@@ -85,7 +85,7 @@ public:
 
     using login_opt = boost::optional<epee::net_utils::http::login>;
 
-    rpccalls(string _daemon_url = "http:://127.0.0.1:17750",
+    rpccalls(string _daemon_url = "http:://127.0.0.1:17767",
              login_opt _login = login_opt {},
              uint64_t _timeout = 200000);
 

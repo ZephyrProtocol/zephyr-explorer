@@ -23,15 +23,11 @@ Zephyr C++ libraries, but also demonstrates how to use:
 
 Mainnet versions:
 
-- [https://explorer.havenprotocol.org/](https://explorer.havenprotocol.org/) - https enabled, most popular and very stable.
+- [https://explorer.zephyrprotocol.com/](https://explorer.zephyrprotocol.com/) - https enabled, most popular and very stable.
 
 Testnet version:
 
-- [https://explorer-testnet.havenprotocol.org/](https://explorer-testnet.havenprotocol.org/) - https enabled.
-
-Stagenet version:
-
-- [https://explorer-stagenet.havenprotocol.org/](https://explorer-stagenet.havenprotocol.org/) - https enabled.
+- [https://explorer-testnet.zephyrprotocol.com/](https://explorer-testnet.zephyrprotocol.com/) - https enabled.
 
 ## Zephyr Blockchain Explorer features
 
@@ -83,14 +79,14 @@ as follows:
 cd ~
 
 # download the source code
-git clone --recursive https://github.com/haven-protocol-org/haven-explorer.git
+git clone --recursive https://github.com/ZephyrProtocol/zephyr.git
 
 # enter the downloaded sourced code folder
-cd haven-explorer
+cd zephyr
 
 # make a build folder and enter it
-mkdir src/haven-main/build/Linux/master/release/
-cd src/haven-main/build/Linux/master/release/
+mkdir src/zephyr/build/Linux/master/release/
+cd src/zephyr/build/Linux/master/release/
 cmake -D CMAKE_BUILD_TYPE=Release ../../../..
 cmake --build . --target wallet --
 cmake --build . --target daemonizer --
@@ -100,7 +96,7 @@ cd ../../../../../../
 mkdir build && cd build
 
 # create the makefile
-cmake -DMONERO_DIR=$PWD/../src/haven-main ..
+cmake -DMONERO_DIR=$PWD/../src/zephyr ..
 
 # compile
 make
@@ -112,13 +108,13 @@ To run it:
 ./xmrblocks
 ```
 
-By default it will look for blockchain in its default location i.e., `~/.haven/lmdb`.
+By default it will look for blockchain in its default location i.e., `~/.zephyr/lmdb`.
 You can use `-b` option if its in different location.
 
 For example:
 
 ```bash
-./xmrblocks -b /home/mwo/non-default-haven-location/lmdb/
+./xmrblocks -b /home/mwo/non-default-zephyr-location/lmdb/
 ```
 
 Example output:
@@ -183,7 +179,7 @@ xmrblocks, Onion Monero Blockchain Explorer:
                                         functionality
   --ssl-key-file arg                    path to key file for ssl (https)
                                         functionality
-  -d [ --daemon-url ] arg (=http:://127.0.0.1:17750)
+  -d [ --daemon-url ] arg (=http:://127.0.0.1:17767)
                                         Zephyr daemon url
   --daemon-login arg                    Specify username[:password] for daemon
                                         RPC client

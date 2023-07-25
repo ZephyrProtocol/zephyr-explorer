@@ -3251,7 +3251,7 @@ show_checkrawtx(string raw_tx_data, string action)
 
             mstch::array destination_addresses;
             vector<uint64_t> real_ammounts;
-            uint64_t outputs_xmr_sum {0};
+            uint64_t outputs_zeph_sum {0};
 
             // destiantion address for this tx
             for (tx_destination_entry& a_dest: ptx.construction_data.splitted_dsts)
@@ -3269,7 +3269,7 @@ show_checkrawtx(string raw_tx_data, string action)
                         }
                 );
 
-                outputs_xmr_sum += a_dest.amount;
+                outputs_zeph_sum += a_dest.amount;
 
                 real_ammounts.push_back(a_dest.amount);
             }
@@ -3290,7 +3290,7 @@ show_checkrawtx(string raw_tx_data, string action)
                 real_ammounts.push_back(ptx.construction_data.change_dts.amount);
             };
 
-            tx_context["outputs_xmr_sum"] = xmreg::xmr_amount_to_str(outputs_xmr_sum);
+            tx_context["outputs_zeph_sum"] = xmreg::xmr_amount_to_str(outputs_zeph_sum);
 
             tx_context.insert({"dest_infos", destination_addresses});
 
@@ -6560,13 +6560,12 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
 
     mstch::array outputs;
 
-    uint64_t outputs_xmr_sum {0};
-    bool has_xhv = false;
-    uint64_t outputs_xusd_sum {0};
-    bool has_xusd = false;
-    uint64_t outputs_xasset_sum {0};
-    bool has_xasset = false;
-    std::string out_xasset_type = "";
+    uint64_t outputs_zeph_sum {0};
+    bool has_zeph = false;
+    uint64_t outputs_zephusd_sum {0};
+    bool has_zephusd = false;
+    uint64_t outputs_zephrsv_sum {0};
+    bool has_zephrsv = false;
 
     cerr << "HBD : got " << txd.output_pub_keys.size() << " output keys" << endl;
     
@@ -6590,11 +6589,18 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
         crypto::public_key out_key;
         std::string currency;
         if (outp.first.type() == typeid(txout_zephyr_tagged_key)) {
-            outputs_xmr_sum += outp.second;
-            has_xhv = true;
             out_key = boost::get<cryptonote::txout_zephyr_tagged_key>(outp.first).key;
             currency = boost::get<cryptonote::txout_zephyr_tagged_key>(outp.first).asset_type;
-            out_xasset_type = currency;
+            if (currency == "ZEPH") {
+                outputs_zeph_sum += outp.second;
+                has_zeph = true;
+            } else if (currency == "ZEPHUSD") {
+                outputs_zephusd_sum += outp.second;
+                has_zephusd = true;
+            } else if (currency == "ZEPHRSV") {
+                outputs_zephrsv_sum += outp.second;
+                has_zephrsv = true;
+            }
         }
         
         outputs.push_back(
@@ -6613,13 +6619,12 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
 	
     } //  for (pair<txout_zephyr_tagged_key, uint64_t>& outp: txd.output_pub_keys)
 
-    context["outputs_xmr_sum"] = xmreg::xmr_amount_to_str(outputs_xmr_sum);
-    context["outputs_xusd_sum"] = xmreg::xmr_amount_to_str(outputs_xusd_sum);
-    context["outputs_xasset_sum"] = xmreg::xmr_amount_to_str(outputs_xusd_sum);
-    context["out_xasset_type"] = out_xasset_type;
-    context["has_xhv"] = has_xhv;
-    context["has_xusd"] = has_xusd;
-    context["has_xasset"] = has_xasset;
+    context["outputs_zeph_sum"] = xmreg::xmr_amount_to_str(outputs_zeph_sum);
+    context["outputs_zephusd_sum"] = xmreg::xmr_amount_to_str(outputs_zephusd_sum);
+    context["outputs_zephrsv_sum"] = xmreg::xmr_amount_to_str(outputs_zephrsv_sum);
+    context["has_zeph"] = has_zeph;
+    context["has_zephusd"] = has_zephusd;
+    context["has_zephrsv"] = has_zephrsv;
 
     context.emplace("outputs", outputs);
 

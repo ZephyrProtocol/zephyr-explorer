@@ -207,10 +207,10 @@ main(int ac, const char* av[])
 
     string daemon_url {*daemon_url_opt};
 
-    if (testnet && daemon_url == "http:://127.0.0.1:17750")
-        daemon_url = "http:://127.0.0.1:27750";
-    if (stagenet && daemon_url == "http:://127.0.0.1:17750")
-        daemon_url = "http:://127.0.0.1:37750";
+    if (testnet && daemon_url == "http:://127.0.0.1:17767")
+        daemon_url = "http:://127.0.0.1:27767";
+    if (stagenet && daemon_url == "http:://127.0.0.1:17767")
+        daemon_url = "http:://127.0.0.1:37767";
 
     uint64_t mempool_info_timeout {5000};
 
