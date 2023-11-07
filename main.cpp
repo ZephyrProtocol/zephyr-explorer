@@ -329,7 +329,7 @@ main(int ac, const char* av[])
         return myxmr::htmlresponse(xmrblocks.index2());
     });
 
-    CROW_ROUTE(app, "/supply")
+    CROW_ROUTE(app, "/reserve")
     ([&]() {
         return myxmr::htmlresponse(xmrblocks.circulating_supply());
     });
@@ -763,24 +763,23 @@ main(int ac, const char* av[])
             myxmr::jsonresponse r{xmrblocks.plain_emission()};
             return r;
         });
+        CROW_ROUTE(app, "/api/circulating/zsd")
+        ([&]() {
+            myxmr::jsonresponse r{xmrblocks.plain_supply_zsd()};
+            return r;
+        });
+        CROW_ROUTE(app, "/api/circulating/zrs")
+        ([&]() {
+            myxmr::jsonresponse r{xmrblocks.plain_supply_zrs()};
+            return r;
+        });
         
-        // only for xhv for coinmarketcap
-        // CROW_ROUTE(app, "/api/circulating")
-        // ([&]() {
-
-        //     myxmr::jsonresponse r{xmrblocks.json_circulating_xhv()};
-
-        //     return r;
-        // });
-        
-        // // supply for all assets
-        // CROW_ROUTE(app, "/api/supply")
-        // ([&]() {
-
-        //     myxmr::jsonresponse r{xmrblocks.json_circulating()};
-
-        //     return r;
-        // });
+        // supply for all assets
+        CROW_ROUTE(app, "/api/supply")
+        ([&]() {
+            myxmr::jsonresponse r{xmrblocks.json_circulating()};
+            return r;
+        });
 
         CROW_ROUTE(app, "/api/outputs").methods("GET"_method)
         ([&](const crow::request &req) {

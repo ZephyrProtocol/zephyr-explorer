@@ -43,8 +43,8 @@
   <h3>
     {{outputs_no}} output(s) for total of {{#has_zeph}}
     <span> {{outputs_zeph_sum}} ZEPH </span>
-    {{/has_zeph}} {{#has_zephusd}} + <span> {{outputs_zephusd_sum}} ZEPHUSD </span> {{/has_zephusd}} {{#has_zephrsv}} +
-    <span> {{outputs_zephrsv_sum}} ZEPHRSV </span>
+    {{/has_zeph}} {{#has_zephusd}} + <span> {{outputs_zephusd_sum}} ZSD </span> {{/has_zephusd}} {{#has_zephrsv}} +
+    <span> {{outputs_zephrsv_sum}} ZRS </span>
     {{/has_zephrsv}}
   </h3>
   <div class="center">
@@ -133,11 +133,11 @@
     </ul>
   </div>
   {{/enable_mixins_details}} {{^inputs_xmr_sum_not_zero}}
-  <h3>{{inputs_no}} input(s) for total of {{inputs_xmr_sum}} ZEPH</h3>
+  <h3>{{inputs_no}} input(s) for total of {{inputs_xmr_sum}} {{input_currency}}</h3>
   {{/inputs_xmr_sum_not_zero}} {{#inputs_xmr_sum_not_zero}} {{^have_any_unknown_amount}}
-  <h3>{{inputs_no}} inputs(s) for total of {{inputs_xmr_sum}} ZEPH</h3>
+  <h3>{{inputs_no}} inputs(s) for total of {{inputs_xmr_sum}} {{input_currency}}</h3>
   {{/have_any_unknown_amount}} {{#have_any_unknown_amount}}
-  <h3>{{inputs_no}} inputs(s) for total of at least {{inputs_xmr_sum}} ZEPH</h3>
+  <h3>{{inputs_no}} inputs(s) for total of at least {{inputs_xmr_sum}} {{input_currency}}</h3>
   {{/have_any_unknown_amount}} {{/inputs_xmr_sum_not_zero}} {{#show_part_of_inputs}}
   <h5 style="margin-top: 2px">
     Only {{max_no_of_inputs_to_show}} inputs are shown. To see all, click "<a href="/tx/{{tx_hash}}/1">more details</a>"

@@ -64,7 +64,7 @@ extern  __thread randomx_vm *rx_vm;
 #define TMPL_BLOCK                  TMPL_DIR "/block.html"
 #define TMPL_RANDOMX                TMPL_DIR "/randomx.html"
 #define TMPL_TX                     TMPL_DIR "/tx.html"
-#define TMPL_SUPPLY                 TMPL_DIR "/supply.html"
+#define TMPL_RESERVE                TMPL_DIR "/reserve.html"
 #define TMPL_ADDRESS                TMPL_DIR "/address.html"
 #define TMPL_MY_OUTPUTS             TMPL_DIR "/my_outputs.html"
 #define TMPL_SEARCH_RESULTS         TMPL_DIR "/search_results.html"
@@ -293,6 +293,16 @@ struct randomx_status
 // }
 
 
+std::string convert_to_new_ticker(std::string ticker) {
+    if (ticker == "ZEPHUSD") {
+        return "ZSD";
+    }
+    if (ticker == "ZEPHRSV") {
+        return "ZRS";
+    }
+    return ticker;
+}
+
 /**
 * @brief The tx_details struct
 *
@@ -370,7 +380,7 @@ struct tx_details
                 {"tx_fee"            , fee_str},
                 {"tx_fee_short"      , fee_short_str},
                 {"fee_micro"         , fee_micro_str},
-                {"fee_asset"         , fee_asset},
+                {"fee_asset"         , convert_to_new_ticker(fee_asset)},
                 {"payed_for_kB"      , payed_for_kB_str},
                 {"payed_for_kB_micro", payed_for_kB_micro_str},
                 {"sum_inputs"        , xmr_amount_to_str(xmr_inputs , "{:0.6f}")},
@@ -547,7 +557,7 @@ page(MicroCore* _mcore,
     template_file["block"]           = get_full_page(xmreg::read(TMPL_BLOCK));
     template_file["randomx"]         = get_full_page(xmreg::read(TMPL_RANDOMX));
     template_file["tx"]              = get_full_page(xmreg::read(TMPL_TX));
-    template_file["supply"]          = get_full_page(xmreg::read(TMPL_SUPPLY));
+    template_file["reserve"]         = get_full_page(xmreg::read(TMPL_RESERVE));
     template_file["my_outputs"]      = get_full_page(xmreg::read(TMPL_MY_OUTPUTS));
     template_file["rawtx"]           = get_full_page(xmreg::read(TMPL_MY_RAWTX));
     template_file["checkrawtx"]      = get_full_page(xmreg::read(TMPL_MY_CHECKRAWTX));
@@ -861,7 +871,7 @@ circulating_supply()
     for (auto currency: supply) {
         cerr << currency.first << ":" << currency.second << endl;
         supply_map.push_back(mstch::map {
-            {"currency_label", currency.first},
+            {"currency_label", convert_to_new_ticker(currency.first)},
             {"amount", atomic_units_to_normal(currency.second)}
         });
     }
@@ -870,7 +880,7 @@ circulating_supply()
     add_css_style(context);
     
     // render the page
-    return mstch::render(template_file["supply"], context);
+    return mstch::render(template_file["reserve"], context);
 }
 
 
@@ -5824,6 +5834,30 @@ plain_emission()
     return XMR_AMOUNT(current_values.coinbase);
 }
 
+double
+plain_supply_zsd()
+{
+    vector<pair<string, string>> supply = CurrentBlockchainStatus::get_circulating_supply();
+    for(const auto& currency: supply) {
+        if (currency.first != "ZEPHUSD") {
+            continue;
+        }
+        return XMR_AMOUNT(std::stoull(currency.second));
+    }
+}
+
+double
+plain_supply_zrs()
+{
+    vector<pair<string, string>> supply = CurrentBlockchainStatus::get_circulating_supply();
+    for(const auto& currency: supply) {
+        if (currency.first != "ZEPHRSV") {
+            continue;
+        }
+        return XMR_AMOUNT(std::stoull(currency.second));
+    }
+}
+
 /*
  * Lets use this json api convention for success and error
  * https://labs.omniti.com/labs/jsend
@@ -5832,32 +5866,16 @@ json
 json_circulating()
 {
     json j_response;
+    j_response["ZEPH"] = plain_emission();
     vector<pair<string, string>> supply = CurrentBlockchainStatus::get_circulating_supply();
     for(const auto& currency: supply) {
-        j_response[currency.first] = currency.second.substr(0, currency.second.size() - 12);
+        if (currency.first == "ZEPH") {
+            continue;
+        }
+        j_response[convert_to_new_ticker(currency.first)] = XMR_AMOUNT(std::stoull(currency.second));
     }
 
     return j_response;
-}
-
-/*
- * Lets use this json api convention for success and error
- * https://labs.omniti.com/labs/jsend
- * This function is here solely for coinmarketcap, in case you confused with the one above.
- */
-json
-json_circulating_xhv()
-{
-    std::string circulation_spply;
-
-    vector<pair<string, string>> supply = CurrentBlockchainStatus::get_circulating_supply();
-    for(const auto& currency: supply) {
-        if(currency.first == "ZEPH") {
-            circulation_spply = currency.second;
-        }
-    }
-
-    return circulation_spply.substr(0, circulation_spply.size() - 12);
 }
 
 /*
@@ -6227,7 +6245,7 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
             {"tx_size"               , fmt::format("{:0.4f}", tx_size)},
             {"tx_fee"                , xmreg::xmr_amount_to_str(txd.fee, "{:0.12f}", false)},
             {"tx_fee_micro"          , xmreg::xmr_amount_to_str(txd.fee*1e6, "{:0.4f}", false)},
-            {"fee_asset"             , txd.fee_asset},
+            {"fee_asset"             , convert_to_new_ticker(txd.fee_asset)},
             {"payed_for_kB"          , fmt::format("{:0.12f}", payed_for_kB)},
             {"tx_version"            , static_cast<uint64_t>(txd.version)},
             {"blk_timestamp"         , blk_timestamp},
@@ -6298,6 +6316,7 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
     }
 
     vector<vector<uint64_t>> mixin_timestamp_groups;
+    std::string input_currency = "ZEPH";
 
     // make timescale maps for mixins in input
     for (const txin_v &in_key: txd.input_key_imgs)
@@ -6310,6 +6329,7 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
         amount = boost::get<cryptonote::txin_zephyr_key>(in_key).amount;
         key_offsets = boost::get<cryptonote::txin_zephyr_key>(in_key).key_offsets;
         k_image = boost::get<cryptonote::txin_zephyr_key>(in_key).k_image;
+        input_currency = boost::get<cryptonote::txin_zephyr_key>(in_key).asset_type;
 
         if (show_part_of_inputs && (input_idx > max_no_of_inputs_to_show))
             break;
@@ -6356,12 +6376,12 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
         }
 
         inputs.push_back(mstch::map {
-                {"in_key_img"   , pod_to_hex(k_image)},
-                {"amount"       , xmreg::xmr_amount_to_str(amount)},
-                {"input_idx"    , fmt::format("{:02d}", input_idx)},
-                {"mixins"       , mstch::array{}},
-                {"ring_sigs"    , mstch::array{}},
-                {"already_spent", false} // placeholder for later
+                {"in_key_img"    , pod_to_hex(k_image)},
+                {"amount"        , xmreg::xmr_amount_to_str(amount)},
+                {"input_idx"     , fmt::format("{:02d}", input_idx)},
+                {"mixins"        , mstch::array{}},
+                {"ring_sigs"     , mstch::array{}},
+                {"already_spent" , false} // placeholder for later
         });
 
         if (detailed_view)
@@ -6524,6 +6544,7 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
     context["have_any_unknown_amount"]  = have_any_unknown_amount;
     context["inputs_xmr_sum_not_zero"]  = (inputs_xmr_sum > 0);
     context["inputs_xmr_sum"]           = xmreg::xmr_amount_to_str(inputs_xmr_sum);
+    context["input_currency"]           = convert_to_new_ticker(input_currency);
     context["server_time"]              = server_time_str;
     context["enable_mixins_details"]    = detailed_view;
     context["enable_as_hex"]            = enable_as_hex;
@@ -6611,7 +6632,7 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
                 {"num_outputs"           , num_outputs_amount},
                 {"unformated_output_idx" , output_idx},
                 {"output_idx"            , fmt::format("{:02d}", output_idx++)},
-                {"currency"              , currency}
+                {"currency"              , convert_to_new_ticker(currency)}
             }
         );
 
@@ -6744,7 +6765,7 @@ get_tx_details(const transaction& tx,
             } else {
                 txd.fee = tx.rct_signatures.txnFee;
             }
-            txd.fee_asset = source;
+            txd.fee_asset = convert_to_new_ticker(source);
         }
     }
 
