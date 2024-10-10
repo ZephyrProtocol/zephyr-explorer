@@ -41,7 +41,10 @@
   </table>
 
   <h3>
-    {{outputs_no}} output(s) for total of {{#has_zeph}}
+    {{outputs_no}} output(s) for total of {{#has_zyield}}
+    <span> {{outputs_zephusd_sum}} ZSD + {{outputs_zyield_sum}} ZYS </span>
+    {{/has_zyield}}
+    {{#has_zeph}}
     <span> {{outputs_zeph_sum}} ZEPH </span>
     {{/has_zeph}} {{#has_zephusd}} + <span> {{outputs_zephusd_sum}} ZSD </span> {{/has_zephusd}} {{#has_zephrsv}} +
     <span> {{outputs_zephrsv_sum}} ZRS </span>

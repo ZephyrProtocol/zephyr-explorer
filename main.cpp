@@ -773,6 +773,11 @@ main(int ac, const char* av[])
             myxmr::jsonresponse r{xmrblocks.plain_supply_zrs()};
             return r;
         });
+        CROW_ROUTE(app, "/api/circulating/zys")
+        ([&]() {
+            myxmr::jsonresponse r{xmrblocks.plain_supply_zys()};
+            return r;
+        });
         
         // supply for all assets
         CROW_ROUTE(app, "/api/supply")

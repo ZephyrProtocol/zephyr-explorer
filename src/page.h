@@ -300,6 +300,9 @@ std::string convert_to_new_ticker(std::string ticker) {
     if (ticker == "ZEPHRSV") {
         return "ZRS";
     }
+    if (ticker == "ZYIELD") {
+        return "ZYS";
+    }
     return ticker;
 }
 
@@ -5858,6 +5861,18 @@ plain_supply_zrs()
     }
 }
 
+double
+plain_supply_zys()
+{
+    vector<pair<string, string>> supply = CurrentBlockchainStatus::get_circulating_supply();
+    for(const auto& currency: supply) {
+        if (currency.first != "ZYIELD") {
+            continue;
+        }
+        return XMR_AMOUNT(std::stoull(currency.second));
+    }
+}
+
 /*
  * Lets use this json api convention for success and error
  * https://labs.omniti.com/labs/jsend
@@ -6587,6 +6602,8 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
     bool has_zephusd = false;
     uint64_t outputs_zephrsv_sum {0};
     bool has_zephrsv = false;
+    uint64_t outputs_zyield_sum {0};
+    bool has_zyield = false;
 
     cerr << "HBD : got " << txd.output_pub_keys.size() << " output keys" << endl;
     
@@ -6621,6 +6638,9 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
             } else if (currency == "ZEPHRSV") {
                 outputs_zephrsv_sum += outp.second;
                 has_zephrsv = true;
+            } else if (currency == "ZYIELD") {
+                outputs_zyield_sum += outp.second;
+                has_zyield = true;
             }
         }
         
@@ -6643,9 +6663,11 @@ construct_tx_context(transaction tx, uint16_t with_ring_signatures = 0)
     context["outputs_zeph_sum"] = xmreg::xmr_amount_to_str(outputs_zeph_sum);
     context["outputs_zephusd_sum"] = xmreg::xmr_amount_to_str(outputs_zephusd_sum);
     context["outputs_zephrsv_sum"] = xmreg::xmr_amount_to_str(outputs_zephrsv_sum);
+    context["outputs_zyield_sum"] = xmreg::xmr_amount_to_str(outputs_zyield_sum);
     context["has_zeph"] = has_zeph;
     context["has_zephusd"] = has_zephusd;
     context["has_zephrsv"] = has_zephrsv;
+    context["has_zyield"] = has_zyield;
 
     context.emplace("outputs", outputs);
 
